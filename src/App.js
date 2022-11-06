@@ -1,6 +1,7 @@
 import {
   addData,
   anonymousLogin,
+  editDocumentById,
   getDocumentsByUserId,
   getTestCollection,
   googleLogin,
@@ -30,6 +31,16 @@ function App() {
     console.log(docRef);
   }, [user]);
 
+  // TODO
+  // EDIT FUNCTION
+  const handleEditData = async () => {
+    if (!user) return;
+    const docRef = await editDocumentById("QKmWnso768XGKqSV8y8L");
+    console.log(docRef);
+  };
+  // REGISTER FORM
+  // DELETE USER
+
   return (
     <>
       <button onClick={anonymousLogin}>ANONYMOUS LOGIN</button>
@@ -40,6 +51,8 @@ function App() {
       <button onClick={handleGetDataByUserId}>GET DATA BY USERID</button>
 
       <button onClick={handleAddData}>ADD DATA</button>
+      <button onClick={handleEditData}>EDIT DATA</button>
+
       <div>{JSON.stringify(user)}</div>
     </>
   );

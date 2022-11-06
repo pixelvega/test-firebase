@@ -16,9 +16,13 @@ import {
   addDoc,
   serverTimestamp,
   where,
+  updateDoc,
+  doc,
 } from "firebase/firestore";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
+
+const DB_NAME = "test-collection";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -58,11 +62,7 @@ export const logout = () => {
 };
 
 export const getTestCollection = async () => {
-  const q = query(
-    collection(db, "test-collection"),
-    orderBy("birthDate"),
-    limit(10)
-  );
+  const q = query(collection(db, DB_NAME), orderBy("birthDate"), limit(10));
   try {
     const querySnapshot = await getDocs(q);
     const data = [];
@@ -84,7 +84,7 @@ export const addData = async (id) => {
       country: "Spain",
       uid: id,
     };
-    const docRef = await addDoc(collection(db, "test-collection"), mockData);
+    const docRef = await addDoc(collection(db, DB_NAME), mockData);
     return docRef;
   } catch (err) {
     return console.log(err);
@@ -93,14 +93,28 @@ export const addData = async (id) => {
 
 export const getDocumentsByUserId = async (id) => {
   const q = query(
-    collection(db, "test-collection"),
+    collection(db, DB_NAME),
     where("uid", "==", id),
     orderBy("birthDate"),
     limit(10)
   );
   try {
     const querySnapshot = await getDocs(q);
-    const data = querySnapshot.docs.map((doc) => doc.data());
+    const data = querySnapshot.docs.map((doc) => {
+      return { ...doc.data(), id: doc.id };
+    });
+    return data;
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+export const editDocumentById = async (docId) => {
+  const docRef = doc(db, DB_NAME, docId);
+  try {
+    const data = await updateDoc(docRef, {
+      name: "Ash",
+    });
     return data;
   } catch (err) {
     console.log(err);
